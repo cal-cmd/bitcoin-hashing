@@ -25,14 +25,17 @@ Blockchain.blocks.push({
 
 function createBlock() {
     for(let i = 0; i <= poem.length - 1; i++) {
-        const newHash = blockHash(Blockchain.blocks.length - 1);
-        const prevHash = Blockchain.blocks[Blockchain.blocks.length - 1].hash;
+        const blockTime = Date.now();
+        const blockLength = Blockchain.blocks.length;
+        const prevHash = Blockchain.blocks[blockLength - 1].hash;
+        console.log((i + 1) + " " + prevHash + " " + poem[i] + " " + blockTime)
+        const newHash = blockHash((i + 1), prevHash, poem[i], blockTime);
         Blockchain.blocks.push({
-            index: Blockchain.blocks.length,
+            index: blockLength,
             hash: newHash,
             prevHash: prevHash,
             data: poem[i],
-            timestamp: Date.now(),
+            timestamp: blockTime,
         });
     }
 
@@ -48,40 +51,33 @@ function verifyChain() {
 }
 
 function verifyBlock(bl) {
-    console.log(Blockchain.blocks[bl].data)
-    if(Blockchain.blocks[bl].data != "" && Blockchain.blocks[bl].index >= 0) {
-        if(Blockchain.blocks[bl].hash != "") {
-            const hash = blockHash(bl - 1)
-            if(hash === Blockchain.blocks[bl].hash) {
-                if(Blockchain.blocks[bl].prevHash != ""){
-                    if(Blockchain.blocks[bl-1].hash === Blockchain.blocks[bl].prevHash) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+    let data = Blockchain.blocks[bl].data;
+    let index = Blockchain.blocks[bl].index;
+    let prevHash = Blockchain.blocks[bl].prevHash;
+    let timestamp = Blockchain.blocks[bl].timestamp;
+    const currentHash = Blockchain.blocks[bl].hash;
+
+    if(Blockchain.blocks[bl].data != "" && Blockchain.blocks[bl].index >= 0 && prevHash != "") {
+        const hash = blockHash(index, prevHash, data, timestamp);
+        if(currentHash === hash && prevHash != "") {
+            return true;
         } else {
             return false;
         }
-    } else if(Blockchain.blocks[bl].index == 0 && Blockchain.blocks[bl].hash == "000000") {
+    } else if(Blockchain.blocks[bl].index <= 1 && Blockchain.blocks[bl].hash == "000000") {
         return true;
     } else {
         return false;
     }
 }
 
-function blockHash(bl) {
-	return crypto.createHash("sha256")
-    .update(Blockchain.blocks[bl].index.toString())
-    .update(Blockchain.blocks[bl].hash)
-    .update(Blockchain.blocks[bl].data.toString())
-    .update(Blockchain.blocks[bl].timestamp.toString())
-	.digest("hex");
+function blockHash(index, prevHash, blockData, blockTime) {
+    return crypto.createHash("sha256")
+    .update(index.toString())
+    .update(prevHash.toString())
+    .update(blockData.toString())
+    .update(blockTime.toString())
+    .digest("hex");
 }
 
 createBlock();
