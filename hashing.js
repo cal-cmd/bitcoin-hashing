@@ -1,7 +1,3 @@
-// test
-
-console.log("Print");
-
 var crypto = require("crypto");
 
 var poem = [
@@ -32,7 +28,6 @@ function createBlock() {
         const blockTime = Date.now();
         const blockLength = Blockchain.blocks.length;
         const prevHash = Blockchain.blocks[blockLength - 1].hash;
-        console.log((i + 1) + " " + prevHash + " " + poem[i] + " " + blockTime)
         const newHash = blockHash((i + 1), prevHash, poem[i], blockTime);
         Blockchain.blocks.push({
             index: blockLength,
