@@ -1,3 +1,7 @@
+// test
+
+console.log("Print");
+
 var crypto = require("crypto");
 
 var poem = [
@@ -57,14 +61,14 @@ function verifyBlock(bl) {
     let timestamp = Blockchain.blocks[bl].timestamp;
     const currentHash = Blockchain.blocks[bl].hash;
 
-    if(Blockchain.blocks[bl].data != "" && Blockchain.blocks[bl].index >= 0 && prevHash != "") {
+    if(data != "" && index >= 0 && prevHash != "") {
         const hash = blockHash(index, prevHash, data, timestamp);
         if(currentHash === hash && prevHash != "") {
             return true;
         } else {
             return false;
         }
-    } else if(Blockchain.blocks[bl].index <= 1 && Blockchain.blocks[bl].hash == "000000") {
+    } else if(index <= 1 && currentHash == "000000") {
         return true;
     } else {
         return false;
